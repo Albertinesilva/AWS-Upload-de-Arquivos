@@ -47,6 +47,9 @@ import com.albertsilva.dscatalog.entities.User;
  * Implementa {@link UserDetailsService} para permitir que o Spring Security
  * carregue os dados do usuário durante o processo de autenticação.
  * </p>
+ * 
+ * @author Albert
+ * @since 2026-03-05
  */
 @Service
 public class UserService implements UserDetailsService {
@@ -67,11 +70,13 @@ public class UserService implements UserDetailsService {
 	 *
 	 * @param pageable informações de paginação
 	 * @return página de {@link UserDTO}
+	 * @author Albert
+	 * @since 2026-03-05
 	 */
 	@Transactional(readOnly = true)
 	public Page<UserDTO> findAllPaged(Pageable pageable) {
 		Page<User> list = repository.findAll(pageable);
-		return list.map(x -> new UserDTO(x));
+		return list.map(UserDTO::new);
 	}
 
 	/**
@@ -80,6 +85,8 @@ public class UserService implements UserDetailsService {
 	 * @param id identificador do usuário
 	 * @return {@link UserDTO} correspondente
 	 * @throws ResourceNotFoundException caso o ID não exista
+	 * @author Albert
+	 * @since 2026-03-05
 	 */
 	@Transactional(readOnly = true)
 	public UserDTO findById(Long id) {
@@ -98,6 +105,8 @@ public class UserService implements UserDetailsService {
 	 *
 	 * @param dto dados do usuário a ser inserido
 	 * @return {@link UserDTO} com os dados persistidos
+	 * @author Albert
+	 * @since 2026-03-05
 	 */
 	@Transactional
 	public UserDTO insert(UserInsertDTO dto) {
@@ -115,6 +124,8 @@ public class UserService implements UserDetailsService {
 	 * @param dto dados atualizados
 	 * @return {@link UserDTO} atualizado
 	 * @throws ResourceNotFoundException caso o ID não exista
+	 * @author Albert
+	 * @since 2026-03-05
 	 */
 	@Transactional
 	public UserDTO update(Long id, UserUpdateDTO dto) {
@@ -134,6 +145,8 @@ public class UserService implements UserDetailsService {
 	 * @param id identificador do usuário
 	 * @throws ResourceNotFoundException caso o ID não exista
 	 * @throws DatabaseException         caso ocorra violação de integridade
+	 * @author Albert
+	 * @since 2026-03-05
 	 */
 	public void delete(Long id) {
 		try {
@@ -154,6 +167,8 @@ public class UserService implements UserDetailsService {
 	 *
 	 * @param dto    objeto com os dados de origem
 	 * @param entity entidade de destino
+	 * @author Albert
+	 * @since 2026-03-05
 	 */
 	private void copyDtoToEntity(UserDTO dto, User entity) {
 
@@ -174,6 +189,8 @@ public class UserService implements UserDetailsService {
 	 * @param username e-mail do usuário
 	 * @return {@link UserDetails} contendo os dados do usuário autenticável
 	 * @throws UsernameNotFoundException caso o e-mail não exista
+	 * @author Albert
+	 * @since 2026-03-05
 	 */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

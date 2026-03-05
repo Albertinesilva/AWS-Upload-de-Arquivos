@@ -23,23 +23,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Entidade que representa um usuário do sistema.
+ *
  * <p>
- * Esta classe é mapeada para a tabela <strong>tb_user</strong> no banco de
- * dados
- * e implementa a interface {@link UserDetails}, permitindo integração direta
- * com o Spring Security para autenticação e autorização.
+ * Mapeada para a tabela <strong>tb_user</strong> no banco de dados e
+ * implementa {@link UserDetails} para integração direta com o Spring Security
+ * para autenticação e autorização.
  * </p>
  *
  * <p>
- * Cada usuário pode possuir múltiplos perfis ({@link Role}),
- * configurando um relacionamento muitos-para-muitos.
+ * Cada usuário pode possuir múltiplos perfis ({@link Role}) em um
+ * relacionamento muitos-para-muitos.
  * </p>
- *
- * @author
+ * 
+ * @author Albert
+ * @since 2026-03-05
  */
 @Entity
 @Table(name = "tb_user")
 public class User implements UserDetails, Serializable {
+
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -61,24 +63,20 @@ public class User implements UserDetails, Serializable {
 
 	/**
 	 * Endereço de e-mail do usuário.
-	 * <p>
 	 * Deve ser único no sistema.
-	 * </p>
 	 */
 	@Column(unique = true)
 	private String email;
 
 	/**
-	 * Senha do usuário (armazenada de forma criptografada).
+	 * Senha criptografada do usuário.
 	 */
 	private String password;
 
 	/**
 	 * Conjunto de perfis (roles) associados ao usuário.
-	 * <p>
 	 * Relacionamento muitos-para-muitos com carregamento imediato (EAGER),
-	 * pois as permissões são necessárias no momento da autenticação.
-	 * </p>
+	 * pois as permissões são necessárias durante a autenticação.
 	 */
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -91,7 +89,7 @@ public class User implements UserDetails, Serializable {
 	}
 
 	/**
-	 * Construtor para criação de instâncias com dados básicos.
+	 * Construtor com dados básicos do usuário.
 	 *
 	 * @param id        identificador do usuário
 	 * @param firstName primeiro nome
@@ -132,9 +130,9 @@ public class User implements UserDetails, Serializable {
 	}
 
 	/**
-	 * Retorna o e-mail do usuário.
-	 * 
-	 * @return e-mail utilizado como login
+	 * Retorna o e-mail do usuário (login).
+	 *
+	 * @return e-mail utilizado como username
 	 */
 	public String getEmail() {
 		return email;
@@ -146,9 +144,10 @@ public class User implements UserDetails, Serializable {
 
 	/**
 	 * Retorna a senha criptografada do usuário.
-	 * 
+	 *
 	 * @return senha criptografada
 	 */
+	@Override
 	public String getPassword() {
 		return password;
 	}
@@ -158,7 +157,7 @@ public class User implements UserDetails, Serializable {
 	}
 
 	/**
-	 * Retorna os perfis associados ao usuário.
+	 * Retorna os perfis (roles) associados ao usuário.
 	 *
 	 * @return conjunto de roles
 	 */
@@ -180,7 +179,6 @@ public class User implements UserDetails, Serializable {
 	/**
 	 * Compara usuários com base no identificador.
 	 */
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -199,8 +197,8 @@ public class User implements UserDetails, Serializable {
 	}
 
 	/**
-	 * Retorna as autoridades (permissões) do usuário
-	 * convertendo cada {@link Role} em {@link SimpleGrantedAuthority}.
+	 * Retorna as autoridades (permissões) do usuário, convertendo cada
+	 * {@link Role} em {@link SimpleGrantedAuthority}.
 	 *
 	 * @return coleção de autoridades utilizadas pelo Spring Security
 	 */
@@ -212,8 +210,7 @@ public class User implements UserDetails, Serializable {
 	}
 
 	/**
-	 * Retorna o nome de usuário utilizado na autenticação.
-	 * Neste sistema, o e-mail é utilizado como login.
+	 * Retorna o username utilizado para autenticação (neste sistema, o e-mail).
 	 *
 	 * @return e-mail do usuário
 	 */
@@ -223,7 +220,9 @@ public class User implements UserDetails, Serializable {
 	}
 
 	/**
-	 * Indica se a conta não está expirada.
+	 * Indica se a conta do usuário não está expirada.
+	 *
+	 * @return true se a conta está ativa
 	 */
 	@Override
 	public boolean isAccountNonExpired() {
@@ -231,7 +230,9 @@ public class User implements UserDetails, Serializable {
 	}
 
 	/**
-	 * Indica se a conta não está bloqueada.
+	 * Indica se a conta do usuário não está bloqueada.
+	 *
+	 * @return true se a conta não está bloqueada
 	 */
 	@Override
 	public boolean isAccountNonLocked() {
@@ -240,6 +241,8 @@ public class User implements UserDetails, Serializable {
 
 	/**
 	 * Indica se as credenciais não estão expiradas.
+	 *
+	 * @return true se as credenciais são válidas
 	 */
 	@Override
 	public boolean isCredentialsNonExpired() {
@@ -248,6 +251,8 @@ public class User implements UserDetails, Serializable {
 
 	/**
 	 * Indica se o usuário está habilitado.
+	 *
+	 * @return true se o usuário está habilitado
 	 */
 	@Override
 	public boolean isEnabled() {
